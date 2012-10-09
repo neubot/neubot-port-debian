@@ -36,5 +36,4 @@ all:
 	for PATCH in $$(ls *.patch); do					\
 		(cd neubot-$(VERSION) && patch -Np1 -i ../$$PATCH);	\
 	done
-	(cd neubot-$(VERSION) &&					\
-	  sudo make debian)
+	(cd neubot-$(VERSION) && make release)
