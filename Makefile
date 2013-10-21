@@ -30,10 +30,10 @@ SOURCE = neubot-$(VERSION).tar.gz
 all:
 	wget $(MIRROR)/$(SOURCE)
 	wget $(MIRROR)/$(SOURCE).sig
-	openssl dgst -sha256 -verify pubkey.pem -signature		\
+	openssl dgst -sha256 -verify pubkey.pem -signature \
 			$(SOURCE).sig $(SOURCE)
 	tar -xzf $(SOURCE)
-	for PATCH in $$(ls *.patch); do					\
-		(cd neubot-$(VERSION) && patch -Np1 -i ../$$PATCH);	\
+	for PATCH in $$(ls *.patch); do \
+		(cd neubot-$(VERSION) && patch -Np1 -i ../$$PATCH); \
 	done
 	(cd neubot-$(VERSION) && make -f ../debian.mk release)
