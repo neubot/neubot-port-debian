@@ -88,8 +88,6 @@ $INSTALL -m644 ../Debian/changelog.Debian.gz $DOC/$PACKAGE_NAME/
 #
 
 CONTROL_DIR=../dist/control
-CONTROL_TARGZ=../dist/control.tar.gz
-rm -f -- $CONTROL_TARGZ
 
 $INSTALL -d $CONTROL_DIR
 $INSTALL -m644 ../Debian/control/control-$PACKAGE_NAME $CONTROL_DIR/control
