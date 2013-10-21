@@ -1,8 +1,9 @@
 #!/bin/sh -e
 
 #
-# Copyright (c) 2011 Simone Basso <bassosimone@gmail.com>,
-#  NEXA Center for Internet & Society at Politecnico di Torino
+# Copyright (c) 2011
+#     Nexa Center for Internet & Society, Politecnico di Torino (DAUIN)
+#     and Simone Basso <bassosimone@gmail.com>
 #
 # This file is part of Neubot <http://www.neubot.org/>.
 #
@@ -48,26 +49,22 @@ if [ `id -u` -ne 0 ]; then
     exit 1
 fi
 
-if [ $# -eq 0 ]; then
-    $0 --with-permission
-    $0 --no-permission
+if [ $# -eq 1 ]; then
+    $0 $1 --with-permission
+    $0 $1 --no-permission
     exit 0
 fi
 
-VER=0.4.16.8
-
-echo 'BEGIN: Create debian package...'
-test -f dist/neubot-$VER-1_all.deb || { make clean; make deb; }
-echo 'END: Create debian package (OK)'
+VERSION=$1
 
 echo 'BEGIN: Install debian package...'
-dpkg -i dist/neubot-$VER-1_all.deb
+dpkg -i neubot-${VERSION}_all.deb
 echo 'END: Install debian package (OK)'
 
 echo '*** Please close the window that asks to update privacy settings...'
 sleep 15
 
-if [ "$1" = "--with-permission" ]; then
+if [ "$2" = "--with-permission" ]; then
     echo 'BEGIN: Stop, update privacy and restart...'
     /etc/init.d/neubot stop
     /usr/bin/neubot privacy -D privacy.informed=1 -D privacy.can_collect=1 \
@@ -86,7 +83,7 @@ echo 'END: Start the viewer and the notifier... (OK)'
 sleep 3
 
 echo 'BEGIN: Reinstall debian package...'
-dpkg -i dist/neubot-$VER-1_all.deb
+dpkg -i neubot-${VERSION}_all.deb
 echo 'END: Reinstall debian package (OK)'
 
 sleep 3
