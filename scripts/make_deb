@@ -59,8 +59,6 @@ SOURCES_LIST_D=$DATA_DIR/etc/apt/sources.list.d
 $MAKE install DESTDIR=$DATA_DIR PREFIX=/usr LOCALSTATEDIR=/var/lib \
     SYSCONFDIR=/etc
 
-find $DATA_DIR -type f -name \*.pyc -exec rm {} \;
-
 $INSTALL -d $SOURCES_LIST_D
 $INSTALL -m644 ../Debian/neubot.list $SOURCES_LIST_D
 
