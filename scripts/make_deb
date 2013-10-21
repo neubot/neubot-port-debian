@@ -76,8 +76,8 @@ $INSTALL ../Debian/init-neubot $INIT_D/neubot
 # don't need to worry about, e.g., the executable name.
 #
 $INSTALL -d $DOC/$PACKAGE_NAME
-$INSTALL -m644 ../Debian/copyright $DOC/$PACKAGE_NAME
-$INSTALL -m644 ../Debian/changelog.Debian.gz $DOC/$PACKAGE_NAME
+$INSTALL -m644 ../Debian/copyright $DOC/$PACKAGE_NAME/
+$INSTALL -m644 ../Debian/changelog.Debian.gz $DOC/$PACKAGE_NAME/
 
 (
     cd $DATA_DIR && tar czf ../data.tar.gz ./*
