@@ -44,5 +44,6 @@ if [ -x /usr/bin/dpkg-scanpackages ]; then
     }
     test $? || exit 1
 else
-    echo "warning: could not update apt: dpkg-scanpackages not available" 1>&2
+    echo "FATAL: could not update apt: dpkg-scanpackages not available" 1>&2
+    exit 1
 fi
