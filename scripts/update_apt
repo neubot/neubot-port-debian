@@ -21,6 +21,11 @@
 # along with Neubot.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#
+# Note: this script runs in the folder that contains
+# the sources of the latest version of Neubot.
+#
+
 if [ -x /usr/bin/dpkg-scanpackages ]; then
     {
         cd .. &&
