@@ -28,7 +28,6 @@
 
 if [ -x /usr/bin/dpkg-scanpackages ]; then
     {
-        cd .. &&
         dpkg-scanpackages . > Packages &&
         gzip --stdout -9 Packages > Packages.gz &&
         cp Debian/Release . &&

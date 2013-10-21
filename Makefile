@@ -1,7 +1,7 @@
 # Makefile
 
 #
-# Copyright (c) 2012
+# Copyright (c) 2012-2013
 #     Nexa Center for Internet & Society, Politecnico di Torino (DAUIN)
 #     and Simone Basso <bassosimone@gmail.com>
 #
@@ -21,19 +21,72 @@
 # along with Neubot.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+#
+# Adapted from Neubot 0.4.15.6's makefile
+#
+
 VERSION = 0.4.16.8
 MIRROR = http://releases.neubot.org/_packages
-SOURCE = neubot-$(VERSION).tar.gz
+TARBALL = neubot-$(VERSION).tar.gz
+SIGNATURE = $(TARBALL).sig
+SRCDIR = neubot-$(VERSION)
 
-.PHONY: all
+DEB_VERSION = $(VERSION)-1
 
-all:
-	wget $(MIRROR)/$(SOURCE)
-	wget $(MIRROR)/$(SOURCE).sig
+.PHONY: all clean deb-package deb-package-nox regress
+
+all: deb-package deb-package-nox
+	scripts/update_apt
+
+$(TARBALL):
+	wget $(MIRROR)/$(TARBALL)
+$(TARBALL).sig:
+	wget $(MIRROR)/$(TARBALL).sig
+
+$(SRCDIR): $(TARBALL) $(TARBALL).sig
 	openssl dgst -sha256 -verify pubkey.pem -signature \
-			$(SOURCE).sig $(SOURCE)
-	tar -xzf $(SOURCE)
+			$(TARBALL).sig $(TARBALL)
+	tar -xzf $(TARBALL)
 	for PATCH in $$(ls *.patch); do \
 		(cd neubot-$(VERSION) && patch -Np1 -i ../$$PATCH); \
 	done
-	(cd neubot-$(VERSION) && make -f ../debian.mk release)
+
+_make_deb: $(SRCDIR)
+	( \
+	 set -e; \
+	 cd $(SRCDIR); \
+	 fakeroot ../scripts/make_deb $(_DEB_PKGNAME) $(DEB_VERSION); \
+	 lintian ../$(_DEB_PKGNAME)-$(DEB_VERSION)_all.deb; \
+	)
+
+neubot-$(DEB_VERSION)_all.deb:
+	make -f Makefile _make_deb _DEB_PKGNAME=neubot
+neubot-nox-$(DEB_VERSION)_all.deb:
+	make -f Makefile _make_deb _DEB_PKGNAME=neubot-nox
+
+deb-package: neubot-$(DEB_VERSION)_all.deb
+deb-package-nox: neubot-nox-$(DEB_VERSION)_all.deb
+
+regress: deb-package deb-package-nox
+	rm -rf -- regress/success regress/failure
+	for FILE in $$(find regress -type f -perm +0111); do \
+	    echo "* Running regression test: $$FILE"; \
+	    ./$$FILE; \
+	    if [ $$? -ne 0 ]; then \
+	        echo $$FILE >> regress/failure; \
+	    else \
+	        echo $$FILE >> regress/success; \
+	    fi; \
+	    echo ""; \
+	    echo ""; \
+	done
+	if [ -f regress/failure ]; then \
+	    echo "*** At least one regression test has failed"; \
+	    echo "*** Check regress/failure for more info"; \
+	    exit 1; \
+	fi
+
+clean:
+	rm -rf -- $(TARBALL) $(SIGNATURE) $(SRCDIR) dist/
+veryclean: clean
+	rm -rf -- *.deb Packages Packages.gz Release Release.gpg
