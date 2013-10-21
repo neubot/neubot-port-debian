@@ -1,2 +1,11 @@
-Script and patches to build Neubot for Debian (yes, the plan
-is to move here the deb/ folder.)
+Neubot debian
+'''''''''''''
+
+Script and patches to build Neubot for Debian.
+
+The ``Makefile`` invokes code in ``debian.mk``, which delegates
+the bulk of the work to ``scripts/make_deb``.
+
+The main Neubot repository is:
+
+    https://github.com/neubot/neubot
