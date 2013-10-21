@@ -1,4 +1,4 @@
-# Makefile
+# debian.mk
 
 #
 # Copyright (c) 2010-2013
@@ -31,6 +31,7 @@ VERSION = 0.4.16.8-1_all
 # The list of .PHONY targets.  This is also used to build the
 # help message--and note that the targets named with a leading
 # underscore are private.
+#
 # Here we list targets in file order because this makes it easier
 # to maintain this list.
 #
@@ -46,30 +47,30 @@ PHONIES += release
 
 help:
 	@printf "Targets:"
-	@for TARGET in `grep ^PHONIES Makefile|sed 's/^.*+= //'`; do	\
-	     if echo $$TARGET|grep -qv ^_; then				\
-	         printf " $$TARGET";					\
-	     fi;							\
+	@for TARGET in `grep ^PHONIES Makefile|sed 's/^.*+= //'`; do \
+	     if echo $$TARGET|grep -qv ^_; then \
+	         printf " $$TARGET"; \
+	     fi; \
 	 done
 	@printf '\n'
 
 regress:
 	rm -rf -- regress/success regress/failure
-	for FILE in $$(find regress -type f -perm -0111); do		\
-	    echo "* Running regression test: $$FILE";			\
-	    ./$$FILE;							\
-	    if [ $$? -ne 0 ]; then					\
-	        echo $$FILE >> regress/failure;				\
-	    else							\
-	        echo $$FILE >> regress/success;				\
-	    fi;								\
-	    echo "";							\
-	    echo "";							\
+	for FILE in $$(find regress -type f -perm -0111); do \
+	    echo "* Running regression test: $$FILE"; \
+	    ./$$FILE; \
+	    if [ $$? -ne 0 ]; then \
+	        echo $$FILE >> regress/failure; \
+	    else \
+	        echo $$FILE >> regress/success; \
+	    fi; \
+	    echo ""; \
+	    echo ""; \
 	done
-	if [ -f regress/failure ]; then					\
-	    echo "*** At least one regression test has failed";		\
-	    echo "*** Check regress/failure for more info";		\
-	    exit 1;							\
+	if [ -f regress/failure ]; then \
+	    echo "*** At least one regression test has failed"; \
+	    echo "*** Check regress/failure for more info"; \
+	    exit 1; \
 	fi
 
 #      _      _
@@ -121,6 +122,7 @@ _deb_control:
 # Note that we must make _deb_data before _deb_control
 # because the latter must calculate the md5sums and the
 # total size.
+#
 # Fakeroot will guarantee that we don't ship a debian
 # package with ordinary user ownership.
 #
