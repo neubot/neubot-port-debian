@@ -55,7 +55,7 @@ help:
 
 regress:
 	rm -rf -- regress/success regress/failure
-	for FILE in $$(find regress -type f -perm -0111); do		\
+	for FILE in $$(find regress -type f -perm +0111); do		\
 	    echo "* Running regression test: $$FILE";			\
 	    ./$$FILE;							\
 	    if [ $$? -ne 0 ]; then					\
