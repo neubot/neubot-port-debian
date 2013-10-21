@@ -41,7 +41,6 @@ PACKAGE_NAME=$1
 VERSION=$2
 
 DIST_DIR=../dist
-install -d $DIST_DIR
 
 # Start over
 rm -rf -- $DIST_DIR
