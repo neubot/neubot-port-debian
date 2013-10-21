@@ -33,7 +33,7 @@ SRCDIR = neubot-$(VERSION)
 
 DEB_VERSION = $(VERSION)-1
 
-.PHONY: all clean deb-package deb-package-nox regress
+.PHONY: all clean deb-package deb-package-nox regress veryclean
 
 all: deb-package deb-package-nox
 	scripts/update_apt
