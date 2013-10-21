@@ -24,7 +24,7 @@
 #
 # Adapted from Neubot 0.4.15.6's makefile.
 #
-# Note: this script run inside the directory that contains
+# Note: this script runs inside the directory that contains
 # the sources of the latest version of Neubot.
 #
 
