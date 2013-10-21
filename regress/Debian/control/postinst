@@ -142,11 +142,6 @@ echo 'BEGIN: run Debian/control/postinst'
 ./Debian/control/postinst
 echo 'END: run Debian/control/postinst (OK)'
 
-if [ "$1" != "1" -o "$2" != "1" ]; then
-    echo '*** Please close the notification window...'
-    sleep 15
-fi
-
 echo -n 'Make sure that /usr/share/neubot was compiled... '
 test -f /usr/share/neubot/__init__.pyc
 echo 'OK'
