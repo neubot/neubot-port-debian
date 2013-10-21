@@ -84,7 +84,7 @@ $INSTALL -m644 ../Debian/changelog.Debian.gz $DOC/$PACKAGE_NAME/
 )
 
 #
-# Step 1. Build control.tar.gz
+# Step 2. Build control.tar.gz
 #
 
 CONTROL_DIR=../dist/control
