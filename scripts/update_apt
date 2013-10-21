@@ -22,10 +22,10 @@
 
 if [ -x /usr/bin/dpkg-scanpackages ]; then
     {
-        cd ../dist &&
+        cd .. &&
         dpkg-scanpackages . > Packages &&
         gzip --stdout -9 Packages > Packages.gz &&
-        cp ../Debian/Release . &&
+        cp Debian/Release . &&
         for FILE in Packages Packages.gz; do
             {
                 SHA256SUM=`sha256sum $FILE | awk '{print $1}'` &&

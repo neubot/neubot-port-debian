@@ -1,0 +1,127 @@
+#!/bin/sh
+
+#
+# Copyright (c) 2010-2013
+#     Nexa Center for Internet & Society, Politecnico di Torino
+#     and Simone Basso <bassosimone@gmail.com>
+#
+# This file is part of Neubot <http://www.neubot.org/>.
+#
+# Neubot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Neubot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Neubot.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+#
+# Adapted from Neubot 0.4.15.6's makefile.
+#
+# Note: this scripts run inside the directory that contains
+# the sources of the latest version of Neubot.
+#
+
+set -e
+
+INSTALL=install
+MAKE=make
+
+if [ $# -ne 2 ]; then
+    echo "usage: $0 package_name version" 1>&2
+    exit 1
+fi
+PACKAGE_NAME=$1
+VERSION=$2
+
+DIST_DIR=../dist
+install -d $DIST_DIR
+
+# Start over
+rm -rf -- $DIST_DIR
+
+#
+# Step 1. Build data.tar.gz
+#
+
+DATA_DIR=../dist/data
+
+CRON_DAILY=$DATA_DIR/etc/cron.daily
+DOC=$DATA_DIR/usr/share/doc/
+INIT_D=$DATA_DIR/etc/init.d
+SOURCES_LIST_D=$DATA_DIR/etc/apt/sources.list.d
+
+$MAKE install DESTDIR=$DATA_DIR PREFIX=/usr LOCALSTATEDIR=/var/lib \
+    SYSCONFDIR=/etc
+
+find $DATA_DIR -type f -name \*.pyc -exec rm {} \;
+
+$INSTALL -d $SOURCES_LIST_D
+$INSTALL -m644 ../Debian/neubot.list $SOURCES_LIST_D
+
+$INSTALL -d $CRON_DAILY
+$INSTALL ../Debian/cron-neubot $CRON_DAILY/neubot
+
+$INSTALL -d $INIT_D
+$INSTALL ../Debian/init-neubot $INIT_D/neubot
+
+#
+# Note: in Debian the documentation directory must match the name
+# of the package, therefore we name the directory `neubot-nox`,
+# when we generate the `nox` package. This is the only name change
+# in the `nox` package, because the two packages conflict, so we
+# don't need to worry about, e.g., the executable name.
+#
+$INSTALL -d $DOC/$PACKAGE_NAME
+$INSTALL -m644 ../Debian/copyright $DOC/$PACKAGE_NAME
+$INSTALL -m644 ../Debian/changelog.Debian.gz $DOC/$PACKAGE_NAME
+
+(
+    cd $DATA_DIR && tar czf ../data.tar.gz ./*
+)
+
+#
+# Step 1. Build control.tar.gz
+#
+
+CONTROL_DIR=../dist/control
+CONTROL_TARGZ=../dist/control.tar.gz
+rm -f -- $CONTROL_TARGZ
+
+$INSTALL -d $CONTROL_DIR
+$INSTALL -m644 ../Debian/control/control-$PACKAGE_NAME $CONTROL_DIR/control
+$INSTALL -m644 ../Debian/control/conffiles $CONTROL_DIR/conffiles
+$INSTALL ../Debian/control/postinst $CONTROL_DIR/postinst
+$INSTALL ../Debian/control/prerm $CONTROL_DIR/prerm
+$INSTALL ../Debian/control/postrm $CONTROL_DIR/postrm
+
+$INSTALL -m644 /dev/null $CONTROL_DIR/md5sums
+
+_PREVDIR=`pwd`
+(
+    cd $DATA_DIR && \
+    $_PREVDIR/scripts/cksum.py -a md5 `find . -type f|sed 's|\./||g'`
+) > $CONTROL_DIR/md5sums
+
+SIZE=`du -k -s $DATA_DIR|cut -f1`
+
+./scripts/sed_inplace "s|@SIZE@|$SIZE|" $CONTROL_DIR/control
+./scripts/sed_inplace "s|@VERSION@|$VERSION|" $CONTROL_DIR/control
+
+(
+    cd $CONTROL_DIR && tar czf ../control.tar.gz ./*
+)
+
+#
+# Step 3. Finalize the package
+#
+
+echo "2.0" > $DIST_DIR/debian-binary
+ar r ../$PACKAGE_NAME-${VERSION}_all.deb $DIST_DIR/debian-binary \
+    $DIST_DIR/control.tar.gz $DIST_DIR/data.tar.gz
