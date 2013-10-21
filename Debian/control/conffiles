@@ -1,0 +1,6 @@
+/etc/apt/sources.list.d/neubot.list
+/etc/cron.daily/neubot
+/etc/init.d/neubot
+/etc/neubot/api
+/etc/neubot/users
+/etc/xdg/autostart/neubot.desktop

@@ -1,9 +1,8 @@
-# Makefile
+#!/bin/sh
 
 #
-# Copyright (c) 2012
-#     Nexa Center for Internet & Society, Politecnico di Torino (DAUIN)
-#     and Simone Basso <bassosimone@gmail.com>
+# Copyright (c) 2011 Simone Basso <bassosimone@gmail.com>,
+#  NEXA Center for Internet & Society at Politecnico di Torino
 #
 # This file is part of Neubot <http://www.neubot.org/>.
 #
@@ -21,19 +20,10 @@
 # along with Neubot.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-VERSION = 0.4.16.8
-MIRROR = http://releases.neubot.org/_packages
-SOURCE = neubot-$(VERSION).tar.gz
+set -e
 
-.PHONY: all
+update-rc.d -f neubot remove
 
-all:
-	wget $(MIRROR)/$(SOURCE)
-	wget $(MIRROR)/$(SOURCE).sig
-	openssl dgst -sha256 -verify pubkey.pem -signature		\
-			$(SOURCE).sig $(SOURCE)
-	tar -xzf $(SOURCE)
-	for PATCH in $$(ls *.patch); do					\
-		(cd neubot-$(VERSION) && patch -Np1 -i ../$$PATCH);	\
-	done
-	(cd neubot-$(VERSION) && make -f ../debian.mk release)
+if [ "$1"x = "purge"x ]; then
+	rm -rf /var/neubot /var/lib/neubot
+fi
