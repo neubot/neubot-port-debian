@@ -25,7 +25,7 @@
 # Adapted from Neubot 0.4.15.6's makefile
 #
 
-VERSION = 0.4.16.8
+VERSION = 0.4.16.9
 MIRROR = http://releases.neubot.org/_packages
 TARBALL = neubot-$(VERSION).tar.gz
 SIGNATURE = $(TARBALL).sig
