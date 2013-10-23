@@ -54,7 +54,7 @@ Then:
       reboot;
 
    #. make sure that the following commands work properly: ``bittorrent``,
-      ``browser``, ``dash``, ``database``, ``notifier``, ``privacy``, ``raw``,
+      ``dash``, ``database``, ``notifier``, ``privacy``, ``raw``,
       ``speedtest``, ``viewer``.
 
 I typically test new releases on Ubuntu 12.04.
