@@ -20,7 +20,10 @@ and ``make``.
 How to build packages
 ---------------------
 
-Just type ``make deb-package`` and/or ``make deb-package-nox``.
+Just type ``make deb-package`` and/or ``make deb-package-nox``. Note
+that all the patches in the toplevel directory are applied to the Neubot
+sources before creating the package. This fact allows one to make local
+changes to the Debian package.
 
 How to make a release
 ---------------------
